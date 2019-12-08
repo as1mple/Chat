@@ -6,15 +6,15 @@ from tools import set_port_key
 
 
 class Client:
-    SHUTDOWN: bool = False
+    ALIAS: str
+    HOST: str
     JOIN: bool = False
     KEY: int
-    HOST: str
-    PORT: int
-    SOCKET: socket
-    ALIAS: str
-    SERVER: tuple
     NAME_THREAD: str
+    PORT: int
+    SERVER: tuple
+    SHUTDOWN: bool = False
+    SOCKET: socket
 
     def listen(self) -> None:
         while not self.SHUTDOWN:
@@ -59,7 +59,7 @@ class Client:
     def connect(self) -> None:
         self.PORT, self.KEY = set_port_key()
         self.HOST = socket.gethostbyname(socket.gethostname())
-        self.SERVER = ("127.0.1.1", self.PORT)
+        self.SERVER = (self.HOST, self.PORT)
         self.SOCKET = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.SOCKET.bind((self.HOST, False))
         self.SOCKET.setblocking(False)

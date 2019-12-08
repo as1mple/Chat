@@ -5,10 +5,10 @@ from tools import set_port, add_mysql
 
 
 class Server:
-    clients = []
     HOST: str
     PORT: str
     SOCKET: socket
+    USERS = list()
     QUIT = False
 
     def connect(self) -> None:
@@ -23,16 +23,15 @@ class Server:
         while not self.QUIT:
             try:
                 data, addr = self.SOCKET.recvfrom(1024)
-                itsatime = time.strftime("%Y-%m-%d-%H.%M.%S", time.localtime())
-                if addr not in self.clients:
-                    self.clients.append(addr)
-                    ip = addr[0]
-                    id = addr[1]
-                    add_mysql("SERVER", ip, id, data.decode(), itsatime)
+                timing = time.strftime("%Y-%m-%d-%H.%M.%S", time.localtime())
+                if addr not in self.USERS:
+                    self.USERS.append(addr)
+                    ip, id = addr
+                    add_mysql("SERVER", ip, id, data.decode(), timing)
 
-                print("[" + addr[0] + "]=[" + str(addr[1]) + "]=[" + itsatime + "]/", end="")
+                print("[" + addr[0] + "]=[" + str(addr[1]) + "]=[" + timing + "]/", end="")
                 print(data.decode())
-                for client in self.clients:
+                for client in self.USERS:
                     if addr != client:
                         self.SOCKET.sendto(data, client)
             except Exception as e:
